@@ -1,0 +1,181 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Home";
+}
+
+@await Html.PartialAsync("_Alerts")
+
+<style>
+    .hero-section {
+        background: linear-gradient(rgba(0,61,50,0.9), rgba(0,61,50,0.8)), 
+                    url('/images/hero-bg.jpg') center/cover;
+        padding: 5rem 0;
+        color: white;
+    }
+
+    .category-card {
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-card {
+        border: none;
+        border-radius: 12px;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .product-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 24px rgba(0,0,0,.1)!important;
+    }
+
+    .category-icon-wrapper {
+        width: 64px;
+        height: 64px;
+        background: #fff5d2;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+        transition: all 0.3s ease;
+    }
+
+    .category-card:hover .category-icon-wrapper {
+        transform: scale(1.1);
+        background: #FFD814;
+    }
+
+    .category-icon-wrapper i {
+        font-size: 1.75rem;
+        color: #003D32;
+    }
+
+    .category-card {
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+    .category-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 24px rgba(0,0,0,.1)!important;
+    }
+</style>
+
+<!-- Hero Section -->
+<div class="hero-section rounded">
+    <div class="container">
+        <div class="rounded row justify-content-center">
+            <div class="col-md-8 text-center">
+                <h1 class="display-4 fw-bold mb-4">Find What You Need</h1>
+                <form asp-controller="ProductManager" asp-action="Search" method="get" class="mb-3">
+                    <div class="input-group input-group-lg">
+                        <input type="text" 
+                            name="q" 
+                            class="form-control" 
+                            placeholder="Search products..."
+                            required>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Categories Section -->
+<div class="container py-5">
+    <h2 class="fs-4 fw-bold mb-4">Browse Categories</h2>
+    <div class="row row-cols-2 row-cols-md-4 g-4 mb-5">
+        @{
+            var categories = new[] {
+                ("Electronics", "bi-laptop"),
+                ("Books", "bi-book"),
+                ("Clothing", "bi-bag"),
+                ("Sports", "bi-bicycle"),
+                ("Services", "bi-gear")
+            };
+        }
+        @foreach (var (name, icon) in categories)
+        {
+            <div class="col">
+                <div class="category-card card h-100 shadow-sm">
+                    <div class="card-body text-center p-4">
+                        <div class="category-icon-wrapper mb-3">
+                            <i class="bi @icon"></i>
+                        </div>
+                        <h5 class="card-title mb-2">@name</h5>
+                        <p class="text-muted small mb-0">Explore @name.ToLower()</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- Products Section -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="fs-4 fw-bold mb-0">Featured Products</h2>
+    @if (Model.Any())
+    {
+        <div class="d-flex gap-2">
+            <select class="form-select form-select-sm">
+                <option>Sort by</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Newest First</option>
+            </select>
+        </div>
+    }
+</div>
+
+@if (!Model.Any())
+{
+    <div class="text-center py-5">
+        <i class="bi bi-box fs-1 text-muted mb-3"></i>
+        <h3 class="fs-5 fw-bold text-muted">No Products Available</h3>
+        <p class="text-muted mb-4">Check back later for new products</p>
+        <a href="/" class="btn btn-warning pill">Refresh Page</a>
+    </div>
+}
+else
+{
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="product-card card h-100">
+                    <div class="position-relative">
+                        <img src="" class="card-img-top" 
+                            style="height: 200px; object-fit: cover;"
+                            alt="">
+                        @* @if )
+                        {
+                            <div class="position-absolute top-0 end-0 m-2">
+                                <span class="badge bg-success rounded-pill">New</span>
+                            </div>
+                        } *@
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title text-truncate mb-1"></h5>
+                        <p class="text-muted mb-2">@product.Category</p>
+                        <p class="fw-bold text-success mb-0">@product.Price.ToString("C")</p>
+                    </div>
+                    <div class="card-footer bg-transparent border-top-0">
+                        <button class="btn btn-warning w-100 pill">
+                            <i class="bi bi-cart-plus me-2"></i>View Details
+                        </button>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+</div>
